@@ -124,7 +124,8 @@
       font-size: 14px;
     }
 
-    input[type="number"] {
+    input[type="number"],
+    textarea {
       width: 100%;
       padding: 12px 14px;
       border-radius: 10px;
@@ -135,20 +136,29 @@
       transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
     }
 
-    input[type="number"]:focus {
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    input[type="number"]:focus,
+    textarea:focus {
       outline: none;
       border-color: rgba(34, 211, 238, 0.5);
       box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15);
       background: rgba(255, 255, 255, 0.06);
     }
 
-    body[data-theme="light"] input[type="number"]:focus {
+    body[data-theme="light"] input[type="number"]:focus,
+    body[data-theme="light"] textarea:focus {
       border-color: rgba(14, 165, 233, 0.4);
       box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
       background: #e2e8f0;
     }
 
-    body[data-theme="vibe"] input[type="number"]:focus {
+    body[data-theme="vibe"] input[type="number"]:focus,
+    body[data-theme="vibe"] textarea:focus {
       border-color: rgba(244, 114, 182, 0.6);
       box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.18);
       background: rgba(255, 255, 255, 0.1);
@@ -293,6 +303,81 @@
       letter-spacing: 0.01em;
     }
 
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: border-color var(--transition), background var(--transition), color var(--transition), box-shadow var(--transition), transform var(--transition);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+    }
+
+    .tab-btn.active {
+      border-color: rgba(34, 211, 238, 0.6);
+      box-shadow: 0 14px 32px rgba(14, 165, 233, 0.25);
+      background: linear-gradient(145deg, rgba(34, 211, 238, 0.16), rgba(14, 165, 233, 0.08));
+    }
+
+    body[data-theme="vibe"] .tab-btn.active {
+      border-color: rgba(244, 114, 182, 0.6);
+      box-shadow: 0 14px 32px rgba(244, 114, 182, 0.25);
+      background: linear-gradient(145deg, rgba(244, 114, 182, 0.16), rgba(236, 72, 153, 0.1));
+    }
+
+    body[data-theme="light"] .tab-btn {
+      box-shadow: 0 10px 22px rgba(15, 118, 178, 0.12);
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    #lotteryResult {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--input-bg);
+      border: 1px dashed var(--copy-border);
+      min-height: 52px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+
+    .inline-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+      user-select: none;
+    }
+
+    .hidden {
+      display: none;
+    }
+
     @media (max-width: 540px) {
       body {
         padding: 16px;
@@ -317,7 +402,8 @@
         font-size: 13px;
       }
 
-      input[type="number"] {
+      input[type="number"],
+      textarea {
         font-size: 14px;
         padding: 11px 12px;
       }
@@ -327,7 +413,8 @@
         padding: 13px 14px;
       }
 
-      #result {
+      #result,
+      #lotteryResult {
         font-size: 13px;
       }
 
@@ -348,23 +435,52 @@
 <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">Сменить тему</button>
 <div class="layout">
   <main class="card">
-    <h1>Калькулятор номерков</h1>
-    <p>Укажите стартовый номер и количество номерков. Результат автоматически скопируется в буфер обмена.</p>
-    <div class="form">
-      <div>
-        <label for="startNum">Номер с которого нужно начать</label>
-        <input id="startNum" type="number" name="startNum" placeholder="Например, 101">
-      </div>
-      <div>
-        <label for="numNeeded">Сколько нужно номерков</label>
-        <input id="numNeeded" type="number" name="numNeeded" placeholder="Например, 15">
-      </div>
-      <button id="btn" type="button">Посчитать</button>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="calc" type="button">Калькулятор номерков</button>
+      <button class="tab-btn" data-tab="lottery" type="button">Лотерея</button>
     </div>
-    <div id="result"></div>
-    <button id="copyAgain" class="copy-again" type="button">Скопировать результат</button>
-    <button id="clearBtn" class="clear-btn" type="button">Очистить поля и результат</button>
-    <div class="hint">Подсказка: попробуйте разные диапазоны, список сразу копируется.</div>
+
+    <section id="calcSection" class="section active">
+      <h1>Калькулятор номерков</h1>
+      <p>Укажите стартовый номер и количество номерков. Результат автоматически скопируется в буфер обмена.</p>
+      <div class="form">
+        <div>
+          <label for="startNum">Номер с которого нужно начать</label>
+          <input id="startNum" type="number" name="startNum" placeholder="Например, 101">
+        </div>
+        <div>
+          <label for="numNeeded">Сколько нужно номерков</label>
+          <input id="numNeeded" type="number" name="numNeeded" placeholder="Например, 15">
+        </div>
+        <button id="btn" type="button">Посчитать</button>
+      </div>
+      <div id="result"></div>
+      <button id="copyAgain" class="copy-again" type="button">Скопировать результат</button>
+      <button id="clearBtn" class="clear-btn" type="button">Очистить поля и результат</button>
+      <div class="hint">Подсказка: попробуйте разные диапазоны, список сразу копируется.</div>
+    </section>
+
+    <section id="lotterySection" class="section">
+      <h1>Лотерея</h1>
+      <p>Введите количество номерков или включите список, чтобы случайно определить победителя.</p>
+      <div class="form">
+        <label class="inline-toggle">
+          <input id="useList" type="checkbox">
+          Добавить список
+        </label>
+        <div id="lotteryTotalWrap">
+          <label for="lotteryTotal">Сколько всего номерков</label>
+          <input id="lotteryTotal" type="number" name="lotteryTotal" placeholder="Например, 50">
+        </div>
+        <div id="lotteryListWrap" class="hidden">
+          <label for="lotteryList">Список участвующих номерков</label>
+          <textarea id="lotteryList" name="lotteryList" placeholder="Например, 3, 7; 12 24"></textarea>
+        </div>
+        <button id="lotteryBtn" type="button">Определить победителя</button>
+      </div>
+      <div id="lotteryResult"></div>
+      <div class="hint">Победитель выбирается случайным образом в диапазоне от 1 до указанного числа или из списка.</div>
+    </section>
   </main>
   <footer class="footer">
     <div>made by Kiskisgøðx</div>
@@ -380,6 +496,13 @@
   const startInput = document.querySelector("#startNum");
   const numNeededInput = document.querySelector("#numNeeded");
   const themeToggle = document.querySelector("#themeToggle");
+  const lotteryBtn = document.querySelector("#lotteryBtn");
+  const lotteryInput = document.querySelector("#lotteryTotal");
+  const lotteryResult = document.querySelector("#lotteryResult");
+  const useListCheckbox = document.querySelector("#useList");
+  const lotteryTotalWrap = document.querySelector("#lotteryTotalWrap");
+  const lotteryListWrap = document.querySelector("#lotteryListWrap");
+  const lotteryListInput = document.querySelector("#lotteryList");
   const body = document.body;
 
   const themes = ["dark", "light", "vibe"];
@@ -435,6 +558,58 @@
     numNeededInput.value = "";
     resultCont.textContent = "";
     startInput.focus();
+  });
+
+  const toggleLotteryMode = () => {
+    const useList = useListCheckbox.checked;
+    lotteryTotalWrap.classList.toggle("hidden", useList);
+    lotteryListWrap.classList.toggle("hidden", !useList);
+    lotteryResult.textContent = "";
+    lotteryInput.value = "";
+    lotteryListInput.value = "";
+  };
+
+  useListCheckbox.addEventListener("change", toggleLotteryMode);
+
+  lotteryBtn.addEventListener("click", () => {
+    const useList = useListCheckbox.checked;
+
+    if (useList) {
+      const raw = lotteryListInput.value;
+      const numbers = (raw.match(/-?\d+/g) || []).map(n => Number(n)).filter(n => Number.isInteger(n));
+      if (!numbers.length) {
+        lotteryResult.textContent = "Введите корректный список номерков";
+        return;
+      }
+      const winner = numbers[Math.floor(Math.random() * numbers.length)];
+      lotteryResult.textContent = `Победитель: номер ${winner}`;
+      return;
+    }
+
+    const totalStr = lotteryInput?.value;
+    const total = Number(totalStr);
+    if (!Number.isFinite(total) || total < 1) {
+      lotteryResult.textContent = "Введите корректное количество номерков";
+      return;
+    }
+    const winner = Math.floor(Math.random() * total) + 1;
+    lotteryResult.textContent = `Победитель: номер ${winner}`;
+  });
+
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const sections = {
+    calc: document.querySelector("#calcSection"),
+    lottery: document.querySelector("#lotterySection")
+  };
+
+  tabButtons.forEach(btnEl => {
+    btnEl.addEventListener("click", () => {
+      const target = btnEl.dataset.tab;
+      tabButtons.forEach(b => b.classList.toggle("active", b === btnEl));
+      Object.entries(sections).forEach(([key, section]) => {
+        section.classList.toggle("active", key === target);
+      });
+    });
   });
 
   themeToggle.addEventListener("click", () => {
