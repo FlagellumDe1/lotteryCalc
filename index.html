@@ -1,38 +1,451 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Калькулятор номерков</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-grad1: rgba(34, 211, 238, 0.15);
+      --bg-grad2: rgba(14, 165, 233, 0.18);
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #22d3ee;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      --radius: 14px;
+      --transition: 0.25s ease;
+      --input-bg: rgba(255, 255, 255, 0.04);
+      --input-border: rgba(255, 255, 255, 0.12);
+      --copy-bg: rgba(255, 255, 255, 0.06);
+      --copy-border: rgba(255, 255, 255, 0.14);
+    }
+
+    body[data-theme="light"] {
+      --bg: #e9f6ff;
+      --bg-grad1: rgba(59, 130, 246, 0.16);
+      --bg-grad2: rgba(14, 165, 233, 0.15);
+      --card: #ffffff;
+      --border: rgba(12, 74, 110, 0.08);
+      --accent: #0ea5e9;
+      --text: #0f172a;
+      --muted: #475569;
+      --shadow: 0 18px 50px rgba(15, 118, 178, 0.15);
+      --input-bg: #f1f5f9;
+      --input-border: rgba(12, 74, 110, 0.18);
+      --copy-bg: #f8fafc;
+      --copy-border: rgba(12, 74, 110, 0.14);
+    }
+
+    body[data-theme="vibe"] {
+      --bg: #1a1025;
+      --bg-grad1: rgba(244, 114, 182, 0.2);
+      --bg-grad2: rgba(236, 72, 153, 0.24);
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.12);
+      --accent: #f472b6;
+      --text: #ffe8f6;
+      --muted: #f5c9e3;
+      --shadow: 0 20px 60px rgba(255, 105, 180, 0.2);
+      --input-bg: rgba(255, 255, 255, 0.06);
+      --input-border: rgba(255, 255, 255, 0.16);
+      --copy-bg: rgba(255, 255, 255, 0.08);
+      --copy-border: rgba(255, 255, 255, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 20%, var(--bg-grad1), transparent 35%),
+      radial-gradient(circle at 80% 0%, var(--bg-grad2), transparent 32%),
+      var(--bg);
+      color: var(--text);
+      font-family: "Inter", "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+      padding: 24px;
+      transition: background 0.45s ease, color 0.45s ease;
+      position: relative;
+    }
+
+    .layout {
+      width: min(520px, 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .card {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      transition: box-shadow var(--transition), background 0.4s ease, border-color 0.4s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 24px;
+      letter-spacing: 0.01em;
+    }
+
+    p {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .form {
+      display: grid;
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 15px;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: rgba(34, 211, 238, 0.5);
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    body[data-theme="light"] input[type="number"]:focus {
+      border-color: rgba(14, 165, 233, 0.4);
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+      background: #e2e8f0;
+    }
+
+    body[data-theme="vibe"] input[type="number"]:focus {
+      border-color: rgba(244, 114, 182, 0.6);
+      box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.18);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+      color: #0b1224;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+      box-shadow: 0 12px 30px rgba(14, 165, 233, 0.35);
+    }
+
+    body[data-theme="vibe"] button {
+      background: linear-gradient(135deg, #f472b6, #ec4899);
+      color: #1f0a1f;
+      box-shadow: 0 12px 30px rgba(244, 114, 182, 0.35);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 36px rgba(14, 165, 233, 0.45);
+      opacity: 0.96;
+    }
+
+    body[data-theme="vibe"] button:hover {
+      box-shadow: 0 16px 36px rgba(244, 114, 182, 0.45);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 24px rgba(14, 165, 233, 0.35);
+    }
+
+    body[data-theme="vibe"] button:active {
+      box-shadow: 0 10px 24px rgba(244, 114, 182, 0.35);
+    }
+
+    .copy-again {
+      margin-top: 12px;
+      background: var(--copy-bg);
+      color: var(--text);
+      border: 1px solid var(--copy-border);
+      box-shadow: none;
+    }
+
+    .copy-again:hover {
+      box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.35);
+      opacity: 0.98;
+    }
+
+    body[data-theme="vibe"] .copy-again:hover {
+      box-shadow: 0 0 0 1px rgba(244, 114, 182, 0.35);
+    }
+
+    .clear-btn {
+      margin-top: 10px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--copy-border);
+      box-shadow: none;
+    }
+
+    .clear-btn:hover {
+      color: var(--text);
+      border-color: rgba(34, 211, 238, 0.4);
+      box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25);
+      opacity: 1;
+    }
+
+    body[data-theme="vibe"] .clear-btn:hover {
+      border-color: rgba(244, 114, 182, 0.4);
+      box-shadow: 0 0 0 1px rgba(244, 114, 182, 0.25);
+    }
+
+    #result {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--input-bg);
+      border: 1px dashed var(--copy-border);
+      min-height: 52px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease, transform var(--transition), box-shadow var(--transition);
+      width: auto;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    }
+
+    .footer {
+      width: 100%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      padding: 6px 0 2px;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .subfooter {
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.85;
+      letter-spacing: 0.01em;
+    }
+
+    @media (max-width: 540px) {
+      body {
+        padding: 16px;
+      }
+
+      .card {
+        width: 100%;
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+
+      p {
+        font-size: 15px;
+        margin-bottom: 20px;
+      }
+
+      label {
+        font-size: 13px;
+      }
+
+      input[type="number"] {
+        font-size: 14px;
+        padding: 11px 12px;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 13px 14px;
+      }
+
+      #result {
+        font-size: 13px;
+      }
+
+      .hint {
+        font-size: 12px;
+      }
+
+      .theme-toggle {
+        font-size: 13px;
+        padding: 9px 12px;
+        top: 12px;
+        right: 12px;
+      }
+    }
+  </style>
 </head>
-<body>
-  <label for="startNum">Номер с которого нужно начать</label>
-  <input id="startNum" type="number" name="startNum">
-  <label for="numNeeded">Сколько нужно номерков</label>
-  <input id="numNeeded" type="number" name="numNeeded">
-  <button id="btn">Посчиать</button>
-  <div id="result"></div>
-</body>
+<body data-theme="dark">
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">Сменить тему</button>
+<div class="layout">
+  <main class="card">
+    <h1>Калькулятор номерков</h1>
+    <p>Укажите стартовый номер и количество номерков. Результат автоматически скопируется в буфер обмена.</p>
+    <div class="form">
+      <div>
+        <label for="startNum">Номер с которого нужно начать</label>
+        <input id="startNum" type="number" name="startNum" placeholder="Например, 101">
+      </div>
+      <div>
+        <label for="numNeeded">Сколько нужно номерков</label>
+        <input id="numNeeded" type="number" name="numNeeded" placeholder="Например, 15">
+      </div>
+      <button id="btn" type="button">Посчитать</button>
+    </div>
+    <div id="result"></div>
+    <button id="copyAgain" class="copy-again" type="button">Скопировать результат</button>
+    <button id="clearBtn" class="clear-btn" type="button">Очистить поля и результат</button>
+    <div class="hint">Подсказка: попробуйте разные диапазоны, список сразу копируется.</div>
+  </main>
+  <footer class="footer">
+    <div>made by Kiskisgøðx</div>
+    <div class="subfooter">inspired by kotomka</div>
+  </footer>
+</div>
+
 <script>
   const btn = document.querySelector("#btn");
+  const copyAgainBtn = document.querySelector("#copyAgain");
+  const clearBtn = document.querySelector("#clearBtn");
+  const resultCont = document.querySelector("#result");
+  const startInput = document.querySelector("#startNum");
+  const numNeededInput = document.querySelector("#numNeeded");
+  const themeToggle = document.querySelector("#themeToggle");
+  const body = document.body;
+
+  const themes = ["dark", "light", "vibe"];
+
+  const copyToClipboard = (text) => {
+    if (!text) return;
+    navigator?.clipboard?.writeText?.(text)
+            .then(() => {
+              console.log("Скопировано");
+            })
+            .catch(err => {
+              console.log("Something went wrong", err);
+            });
+  };
+
+  const applyTheme = (theme) => {
+    body.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+  };
+
   btn.addEventListener("click", () => {
-    const startNumStr = document.querySelector("#startNum")?.value;
-    const numNeededStr = document.querySelector("#numNeeded")?.value;
-    const result = [];
-    for (let i = 0; i < Number(numNeededStr); i++) {
-      result.push(i + Number(startNumStr));
+    const startNumStr = startInput?.value;
+    const numNeededStr = numNeededInput?.value;
+    const startNum = Number(startNumStr);
+    const numNeeded = Number(numNeededStr);
+
+    if (!Number.isFinite(startNum) || !Number.isFinite(numNeeded) || numNeeded < 1) {
+      resultCont.textContent = "Введите корректные числа";
+      return;
     }
-    const resultCont = document.querySelector("#result");
-    resultCont.textContent  = result.join(", ");
-    navigator?.clipboard?.writeText?.(result.join(", "))
-      .then(() => {
-        console.log("Скопировано")
-      })
-      .catch(err => {
-        console.log('Something went wrong', err);
-      });
+
+    const result = [];
+    for (let i = 0; i < numNeeded; i++) {
+      result.push(i + startNum);
+    }
+
+    const resultText = result.join(", ");
+    resultCont.textContent = resultText;
+    copyToClipboard(resultText);
   });
+
+  copyAgainBtn.addEventListener("click", () => {
+    const text = resultCont.textContent.trim();
+    if (!text) {
+      resultCont.textContent = "Нет данных для копирования";
+      return;
+    }
+    copyToClipboard(text);
+  });
+
+  clearBtn.addEventListener("click", () => {
+    startInput.value = "";
+    numNeededInput.value = "";
+    resultCont.textContent = "";
+    startInput.focus();
+  });
+
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = body.dataset.theme;
+    const currentIndex = themes.indexOf(currentTheme);
+    const nextTheme = themes[(currentIndex + 1) % themes.length];
+    applyTheme(nextTheme);
+  });
+
+  const savedTheme = localStorage.getItem("theme");
+  applyTheme(themes.includes(savedTheme) ? savedTheme : "dark");
 </script>
+</body>
 </html>
