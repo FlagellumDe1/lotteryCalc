@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Калькулятор номерков</title>
+</head>
+<body>
+  <label for="startNum">Номер с которого нужно начать</label>
+  <input id="startNum" type="number" name="startNum">
+  <label for="numNeeded">Сколько нужно номерков</label>
+  <input id="numNeeded" type="number" name="numNeeded">
+  <button id="btn">Посчиать</button>
+  <div id="result"></div>
+</body>
+<script>
+  const btn = document.querySelector("#btn");
+  btn.addEventListener("click", () => {
+    const startNumStr = document.querySelector("#startNum")?.value;
+    const numNeededStr = document.querySelector("#numNeeded")?.value;
+    const result = [];
+    for (let i = 0; i < Number(numNeededStr); i++) {
+      result.push(i + Number(startNumStr));
+    }
+    const resultCont = document.querySelector("#result");
+    resultCont.textContent  = result.join(", ");
+    navigator?.clipboard?.writeText?.(result.join(", "))
+      .then(() => {
+        console.log("Скопировано")
+      })
+      .catch(err => {
+        console.log('Something went wrong', err);
+      });
+  });
+</script>
+</html>
